@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>webgl-fx demo</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+     background:#0f172a;color:#e2e8f0;line-height:1.6}
+h1{font-size:2.4rem;font-weight:900;background:linear-gradient(135deg,#7064ff,#ff6b9d,#06b6d4);
+   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+   padding:48px 24px 8px}
+.sub{color:#64748b;padding:0 24px 48px}
+.scene{position:relative;width:100%;height:420px;border-bottom:1px solid rgba(255,255,255,.07)}
+canvas{display:block;width:100%;height:100%}
+.label{position:absolute;top:20px;left:24px;font-size:.7rem;text-transform:uppercase;
+       letter-spacing:.1em;color:#7064ff;font-weight:700}
+.hint{position:absolute;bottom:20px;right:24px;font-size:.75rem;color:#475569}
+.tabs{display:flex;gap:8px;padding:24px;background:#0f172a;border-bottom:1px solid rgba(255,255,255,.07)}
+.tab{background:#1e293b;color:#94a3b8;border:none;padding:8px 20px;border-radius:8px;
+     cursor:pointer;font-weight:600;font-size:.85rem;transition:all .2s}
+.tab.active{background:#7064ff;color:#fff}
+pre{background:#1e293b;padding:20px 24px;font-size:.8rem;
+    overflow-x:auto;white-space:pre-wrap;color:#94a3b8}
+</style>
+</head>
+<body>
+<h1>webgl-fx</h1>
+<p class="sub">Real-time 3D &amp; WebGL environments. Mouse-reactive. Zero config.</p>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchScene('particles')">Particle Cloud</button>
+  <button class="tab" onclick="switchScene('galaxy')">Galaxy</button>
+  <button class="tab" onclick="switchScene('wavegrid')">Wave Grid</button>
+</div>
+
+<div class="scene">
+  <canvas id="canvas"></canvas>
+  <div class="label" id="scene-label">Particle Cloud</div>
+  <div class="hint">Move mouse to interact</div>
+</div>
+
+<pre>// Particle cloud
+WebglFx.particles(canvas, { count: 3000, color: 0x7064ff, mouse: true });
+
+// Galaxy with spiral arms
+WebglFx.galaxy(canvas, { arms: 3, inner: 0xff6b9d, outer: 0x7064ff });
+
+// Animated wave grid
+WebglFx.waveGrid(canvas, { cols: 60, rows: 60, amp: 20 });</pre>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../src/webgl-fx.js"></script>
+<script>
+let currentCtrl = null;
+const canvas = document.getElementById('canvas');
+const labels = { particles: 'Particle Cloud', galaxy: 'Galaxy', wavegrid: 'Wave Grid' };
+
+function switchScene(type) {
+  if (currentCtrl) currentCtrl.stop();
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.textContent.toLowerCase().includes(type.replace('grid',' grid'))));
+  document.getElementById('scene-label').textContent = labels[type];
+  if (type === 'particles') currentCtrl = WebglFx.particles(canvas, { count: 3000 });
+  if (type === 'galaxy')    currentCtrl = WebglFx.galaxy(canvas);
+  if (type === 'wavegrid')  currentCtrl = WebglFx.waveGrid(canvas);
+}
+switchScene('particles');
+</script>
+</body>
+</html>
